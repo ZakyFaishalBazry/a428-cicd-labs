@@ -1,27 +1,23 @@
 pipeline {
-    agent any // Ubah bagian atas menjadi any
+    agent any
     stages {
-        stage('Build') { 
-            agent {
-                docker {
-                    image 'node:18-buster-slim' 
-                    args '-p 3000:3000' 
-                }
-            }
+        stage('Build') {
             steps {
-                sh 'npm install'
+                script {
+                    docker.image('node:18-buster-slim').inside('-p 3000:3000') {
+                        sh 'npm install'
+                    }
+                }
             }
         }
         
         stage('Test') {
-            agent {
-                docker {
-                    image 'node:18-buster-slim' 
-                    args '-p 3000:3000' 
-                }
-            }
             steps {
-                sh './jenkins/scripts/test.sh'
+                script {
+                    docker.image('node:18-buster-slim').inside('-p 3000:3000') {
+                        sh './jenkins/scripts/test.sh'
+                    }
+                }
             }
         }
     }
